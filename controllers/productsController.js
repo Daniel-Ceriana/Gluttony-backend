@@ -21,6 +21,7 @@ const productsController = {
     let products;
     try {
       products = await Products.find();
+      // Products.find(req.query) -> para paginacion
       return res.status(200).json({ success: true, products: products });
     } catch (err) {
       return res.status(500).json({ success: false, error: err });
