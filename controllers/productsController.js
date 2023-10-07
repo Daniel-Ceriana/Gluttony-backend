@@ -1,4 +1,5 @@
 // import Products from "../models/productModel";
+const { listeners } = require("process");
 const Products = require("../models/productModel.js");
 // const Product = require("../models/productModel.js");
 //base de datos
@@ -17,6 +18,33 @@ const productsController = {
     }
     res.json({ product });
   },
+  getProductByName: async (req, res) => {
+    let product;
+    let query = {};
+
+    try {
+      query = req.query.name;
+      if (query) {
+        console.log(query);
+
+        //searches elements with name starting with query
+        product = await Products.find({
+          name: { $in: new RegExp("^" + query) },
+        });
+      } else {
+        console.log(req.query);
+      }
+      // console.log(product);
+
+      return res.status(200).json({ success: true, product: product });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ success: false, error: err, ALGO: "ASDJAKJDHKASJ" });
+    }
+    res.json({ product });
+  },
+
   getProducts: async (req, res) => {
     let products;
     try {
