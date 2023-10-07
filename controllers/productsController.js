@@ -4,6 +4,10 @@ const Products = require("../models/productModel.js");
 //base de datos
 
 //
+let options = {
+  page: 1,
+  limit: 2,
+};
 
 const productsController = {
   getProductById: async (req, res) => {
@@ -54,6 +58,23 @@ const productsController = {
       return res
         .status(200)
         .json({ success: true, message: "Producto eliminado" });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err });
+    }
+  },
+  getPagination: async (req, res) => {
+    let products;
+    try {
+      let query = req.query.page;
+
+      // chequear que sea numero valido
+      if (query) {
+        options.page = query;
+      }
+      products = await Products.paginate({}, options);
+      console.log(products);
+      // Products.find(req.query) -> para paginacion
+      return res.status(200).json({ success: true, products: products });
     } catch (err) {
       return res.status(500).json({ success: false, error: err });
     }
