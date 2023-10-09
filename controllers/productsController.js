@@ -3,9 +3,11 @@ const Products = require("../models/productModel.js");
 // const Product = require("../models/productModel.js");
 //base de datos
 
-//
+//options for pagination
 let options = {
+  // default page
   page: 1,
+  // amount of elements per page
   limit: 2,
 };
 
@@ -23,9 +25,22 @@ const productsController = {
   },
   getProducts: async (req, res) => {
     let products;
+    let query = {};
+    console.log(req.query);
+
+    // multiple queries
+    if (req.query.categorie) {
+      query = { ...query, categorie: req.query.categorie };
+    }
+    if (req.query._id) {
+      query = { ...query, _id: req.query._id };
+    }
+    if (req.query.name) {
+      query = { ...query, name: { $in: new RegExp("^" + req.query.name) } };
+    }
+
     try {
-      products = await Products.find();
-      // Products.find(req.query) -> para paginacion
+      products = await Products.find(query);
       return res.status(200).json({ success: true, products: products });
     } catch (err) {
       return res.status(500).json({ success: false, error: err });
@@ -72,8 +87,6 @@ const productsController = {
         options.page = query;
       }
       products = await Products.paginate({}, options);
-      console.log(products);
-      // Products.find(req.query) -> para paginacion
       return res.status(200).json({ success: true, products: products });
     } catch (err) {
       return res.status(500).json({ success: false, error: err });
