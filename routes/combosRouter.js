@@ -1,7 +1,7 @@
 const express = require("express");
 const combosRouter = express.Router();
 
-const combosController = require("../controllers/combosController");
+const combosController = require("../controllers/combosController.js");
 
 combosRouter.get("/combos", combosController.getCombos);
 combosRouter.get("/combos/:id", combosController.getComboByProductId);

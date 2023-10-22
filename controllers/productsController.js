@@ -44,8 +44,8 @@ const productsController = {
     console.log(req.query);
 
     // multiple queries
-    if (req.query.categorie) {
-      query.categorie = req.query.categorie;
+    if (req.query.category) {
+      query.category = req.query.category;
     }
     if (req.query._id) {
       query._id = req.query._id;
