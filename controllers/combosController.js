@@ -1,123 +1,95 @@
-// import Products from "../models/productModel";
 const Combos = require("../models/comboModel");
-// const Product = require("../models/productModel.js");
-//base de datos
+const { handleResponse, handleError } = require("./responseHelpers");
 
 const combosController = {
-  getComboByProductId: async (req, res) => {
-    let status;
-    let response;
-    let combos;
-    let combosFiltrados;
-    const id = req.params.id;
-    try {
-      combos = await Combos.find().populate("products.product");
-      status = 200;
-      combosFiltrados = combos.filter((combo) =>
-        combo.products.find(
-          (aProduct) => aProduct.product._id.toString() === id
-        )
-      );
-      response = { success: true, combos: combosFiltrados };
-    } catch (err) {
-      status = 500;
-      response = {
-        success: false,
-        error: err,
-      };
-    }
-    return res.status(status).json(response);
-  },
   getCombos: async (req, res) => {
-    let status;
-    let response;
-    let combos;
     try {
-      combos = await Combos.find().populate("products.product");
-      if (combos.length == 0) {
-        status = 404;
-        response = notFound;
-      } else {
-        status = 200;
-        response = { success: true, combos: combos };
-      }
-    } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-    }
-    return res.status(status).json(response);
-  },
-  getCombosUnified: async (req, res) => {
-    let status;
-    let response;
-    let combos;
-    let query = {};
+      const productId = req.query.productId;
+      let combos;
 
-    // multiple queries
-    if (req.params.id) {
-      query._id = req.params.id;
-    }
-
-    try {
-      combos = await Combos.find(query); //Si no hay query de productId trae todos los combos
-      console.log(combos);
-      if (query.productId) {
-        combosF = combos.filter((combo) =>
-          combo.products.find(
-            (aProduct) =>
-              aProduct.product._id.toString() === req.query.productId
-          )
+      if (productId) {
+        combos = await Combos.find({ "products.product": productId }).populate(
+          "products.product"
         );
-        console.log(combosF);
-      }
-      if (combos.length == 0) {
-        status = 404;
-        response = notFound;
       } else {
-        status = 200;
-        response = { success: true, combos: combos };
+        combos = await Combos.find().populate("products.product");
       }
-      // return res.status(200).json({ success: true, products: products });
+
+      if (combos.length === 0) {
+        return handleResponse(res, 404, true, {
+          message: "No combos were found that include that Product",
+          combos: [],
+        });
+      }
+
+      return handleResponse(res, 200, true, { combos });
     } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-      // chequear que esto sea correcto en buenas practicas
-      // si hay error habria que manejarlo inmediatamente
-      // return res.status(500).json({ success: false, error: err });
+      return handleError(res, 500, err);
     }
-    return res.status(status).json(response);
   },
-  createCombo: async (req, res) => {
-    let status;
-    let response;
-    let auxCombo;
+
+  getCombosById: async (req, res) => {
     try {
-      auxProduct = await Combos.create(req.body);
-      status = 201;
-      response = { success: true, combo: auxCombo };
-      // return res.status(201).json({ success: true, product: auxProduct });
+      const combos = await Combos.find({ _id: req.params.id }).populate(
+        "products.product"
+      );
+
+      if (combos.length === 0) {
+        return handleResponse(res, 404, true, {
+          message: "No combos were found with that Id",
+          combos: [],
+        });
+      }
+
+      return handleResponse(res, 200, true, { combos });
     } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-      // return res.status(500).json({ success: false, error: err });
+      return handleError(res, 500, err);
     }
-    return res.status(status).json(response);
+  },
+
+  createCombo: async (req, res) => {
+    try {
+      const auxCombo = await Combos.create(req.body);
+      return handleResponse(res, 201, true, { combo: auxCombo });
+    } catch (err) {
+      return handleError(res, 500, err);
+    }
+  },
+  updateCombo: async (req, res) => {
+    try {
+      // Verifica si el combo existe antes de intentar actualizarlo
+      const existingCombo = await Combos.findOne({ _id: req.params.id });
+
+      if (!existingCombo) {
+        return handleResponse(res, 404, true, {
+          message: "Combo no encontrado",
+        });
+      }
+
+      // Realiza la actualización del combo
+      const updatedCombo = await Combos.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true } // Esta opción determina si la función debe devolver el documento original antes de la actualizacion "false", o el documente actualziado
+      );
+
+      return handleResponse(res, 200, true, { combo: updatedCombo });
+    } catch (err) {
+      return handleError(res, 500, err);
+    }
   },
   deleteCombo: async (req, res) => {
-    let status;
-    let response;
     try {
-      await Combos.findByIdAndDelete({ _id: req.params.id });
-      status = 200;
-      response = { success: true, message: "Combo deleted" };
-      // return res
-      // .status(200)
-      // .json({ success: true, message: "Producto eliminado" });
+      const deletedCombo = await Combos.findByIdAndDelete({
+        _id: req.params.id,
+      });
+      if (!deletedCombo) {
+        return handleResponse(res, 404, true, { message: "Combo not found" });
+      }
+      return handleResponse(res, 200, true, { message: "Combo deleted" });
     } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
+      return handleError(res, 500, err);
     }
-    return res.status(status).json(response);
   },
 };
 

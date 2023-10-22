@@ -1,148 +1,118 @@
-// import Products from "../models/productModel";
-const Products = require("../models/productModel.js");
-// const Product = require("../models/productModel.js");
-//base de datos
-
-//options for pagination
-let options = {
-  // default page
-  page: 1,
-  // amount of elements per page
-  limit: 2,
-};
-let notFound = { success: true, products: [], message: "Product/ s not found" };
+const Product = require("../models/productModel");
+const { handleResponse, handleError } = require("./responseHelpers");
 
 const productsController = {
+  // Obtener un producto por su ID
   getProductById: async (req, res) => {
-    let status;
-    let response;
-    let product;
-    const id = req.params.id;
     try {
-      product = await Products.findOne({ _id: id });
-      status = 200;
-      console.log(product);
-      if (product != null) {
-        response = { success: true, product: product };
-      } else {
-        response = notFound;
-      }
-    } catch (err) {
-      status = 500;
-      response = {
-        success: false,
-        error: err,
-      };
-    }
-    return res.status(status).json(response);
-  },
-  getProducts: async (req, res) => {
-    let status;
-    let response;
-    let products;
-    let query = {};
-    console.log(req.query);
+      const product = await Product.findOne({ _id: req.params.id });
 
-    // multiple queries
-    if (req.query.category) {
-      query.category = req.query.category;
-    }
-    if (req.query._id) {
-      query._id = req.query._id;
-    }
-    if (req.query.name) {
-      const auxQuery = req.query.name.replace("_", " ");
-      query.name = { $in: new RegExp("^" + auxQuery) };
-    }
-    try {
-      products = await Products.find(query);
-      console.log(products);
-      if (products.length == 0) {
-        status = 404;
-        response = notFound;
-      } else {
-        status = 200;
-        response = { success: true, products: products };
+      if (!product) {
+        return handleResponse(res, 404, false, {
+          message: "Producto no encontrado",
+        });
       }
-      // return res.status(200).json({ success: true, products: products });
+
+      return handleResponse(res, 200, true, { product });
     } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-      // chequear que esto sea correcto en buenas practicas
-      // si hay error habria que manejarlo inmediatamente
-      // return res.status(500).json({ success: false, error: err });
+      return handleError(res, 500, err);
     }
-    return res.status(status).json(response);
   },
+
+  // Obtener productos con opciones de filtro (por categoría, ID o nombre)
+  getProducts: async (req, res) => {
+    try {
+      const query = {};
+
+      if (req.query.category) {
+        query.category = req.query.category;
+      }
+      if (req.query._id) {
+        query._id = req.query._id;
+      }
+      if (req.query.name) {
+        const auxQuery = req.query.name.replace("_", " ");
+        query.name = { $in: new RegExp("^" + auxQuery) };
+      }
+
+      const options = {
+        page: req.query.page || 1,
+        limit: req.query.limit || 5,
+      };
+
+      const result = await Product.paginate(query, options);
+
+      if (result.docs.length === 0) {
+        return handleResponse(res, 404, false, {
+          message: "No se encontraron productos",
+        });
+      }
+
+      const response = {
+        success: true,
+        page: {
+          products: result.docs,
+          totalProducts: result.total,
+          productsPerPage: result.limit,
+          actualPage: result.page,
+          totalPages: result.pages,
+        },
+      };
+
+      return handleResponse(res, 200, true, response);
+    } catch (err) {
+      return handleError(res, 500, err);
+    }
+  },
+
+  // Crear un nuevo producto
   createProduct: async (req, res) => {
-    let status;
-    let response;
-    let auxProduct;
     try {
-      auxProduct = await Products.create(req.body);
-      status = 201;
-      response = { success: true, product: auxProduct };
-      // return res.status(201).json({ success: true, product: auxProduct });
+      const auxProduct = await Product.create(req.body);
+      return handleResponse(res, 201, true, { product: auxProduct });
     } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-      // return res.status(500).json({ success: false, error: err });
+      return handleError(res, 500, err);
     }
-    return res.status(status).json(response);
   },
+
+  // Actualizar un producto por su ID
   updateProduct: async (req, res) => {
-    let status;
-    let response;
     try {
-      const product = await Products.findOneAndUpdate(
+      const product = await Product.findOneAndUpdate(
         { _id: req.params.id },
         req.body,
         { new: true }
       );
-      status = 200;
-      response = { success: true, product: product };
-      // return res.status(200).json({ success: true, product: product });
-    } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-    }
-    return res.status(status).json(response);
-  },
-  deleteProduct: async (req, res) => {
-    let status;
-    let response;
-    try {
-      await Products.findByIdAndDelete({ _id: req.params.id });
-      status = 200;
-      response = { success: true, message: "Producto eliminado" };
-      // return res
-      // .status(200)
-      // .json({ success: true, message: "Producto eliminado" });
-    } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
-    }
-    return res.status(status).json(response);
-  },
-  getPagination: async (req, res) => {
-    let status;
-    let response;
-    let products;
-    try {
-      let query = req.query.page;
 
-      // chequear que sea numero valido
-      if (query) {
-        options.page = query;
+      if (!product) {
+        return handleResponse(res, 404, false, {
+          message: "Producto no encontrado",
+        });
       }
-      products = await Products.paginate({}, options);
-      status = 200;
-      response = { success: true, products: products };
+
+      return handleResponse(res, 200, true, { product });
     } catch (err) {
-      status = 500;
-      response = { success: false, error: err };
+      return handleError(res, 500, err);
     }
-    return res.status(status).json(response);
+  },
+
+  // Eliminar un producto por su ID
+  deleteProduct: async (req, res) => {
+    try {
+      const deletedProduct = await Product.findByIdAndDelete({
+        _id: req.params.id,
+      });
+
+      if (!deletedProduct) {
+        return handleResponse(res, 404, false, {
+          message: "Producto no encontrado",
+        });
+      }
+
+      return handleResponse(res, 200, true, { message: "Producto eliminado" });
+    } catch (err) {
+      return handleError(res, 500, err);
+    }
   },
 };
 
