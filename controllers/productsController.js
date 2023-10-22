@@ -10,7 +10,7 @@ let options = {
   // amount of elements per page
   limit: 2,
 };
-let notFound = { success: true, message: "Product/ s not found" };
+let notFound = { success: true, products: [], message: "Product/ s not found" };
 
 const productsController = {
   getProductById: async (req, res) => {
@@ -59,7 +59,7 @@ const productsController = {
       console.log(products);
       if (products.length == 0) {
         status = 404;
-        response = { success: true, message: "No hay productos" };
+        response = notFound;
       } else {
         status = 200;
         response = { success: true, products: products };
@@ -137,7 +137,7 @@ const productsController = {
       }
       products = await Products.paginate({}, options);
       status = 200;
-      response = { success: true, product: product };
+      response = { success: true, products: products };
     } catch (err) {
       status = 500;
       response = { success: false, error: err };
