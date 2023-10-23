@@ -9,6 +9,7 @@ const productsController = {
 
       if (!product) {
         return handleResponse(res, 404, false, {
+          product: [],
           message: "Producto no encontrado",
         });
       }
@@ -44,10 +45,11 @@ const productsController = {
 
       if (result.docs.length === 0) {
         return handleResponse(res, 404, false, {
+          products: [],
           message: "No se encontraron productos",
         });
       }
-
+      console.log(result);
       const response = {
         success: true,
         page: {
@@ -55,7 +57,7 @@ const productsController = {
           totalProducts: result.total,
           productsPerPage: result.limit,
           actualPage: result.page,
-          totalPages: result.pages,
+          totalPages: result.totalPages,
         },
       };
 
@@ -86,6 +88,7 @@ const productsController = {
 
       if (!product) {
         return handleResponse(res, 404, false, {
+          product: [],
           message: "Producto no encontrado",
         });
       }
@@ -105,6 +108,7 @@ const productsController = {
 
       if (!deletedProduct) {
         return handleResponse(res, 404, false, {
+          product: [],
           message: "Producto no encontrado",
         });
       }
