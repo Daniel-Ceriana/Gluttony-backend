@@ -7,3 +7,4 @@ mongoose
   })
   .then(() => console.log("data base connected"))
   .catch((err) => console.log(err));
+// falta cerrar la conexion cuando se la deje de usar
