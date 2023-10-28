@@ -1,31 +1,24 @@
 const User = require("../models/userModel.js");
+const bcryptjs = require("bcryptjs");
 
 //
 
 const userController = {
-  //   getUserById: async (req, res) => {
-  //     let user;
-  //     const id = req.params.id;
-  //     try {
-  //       user = await User.findOne({ _id: id });
-  //       return res.status(200).json({ success: true, user: user });
-  //     } catch (err) {
-  //       res.status(500).json({ success: false, error: err });
-  //     }
-  //     res.json({ user });
-  //   },
-  getUserByEmail: async (req, res) => {
+  signIn: async (req, res) => {
     let user;
     const email = req.params.email;
     try {
       user = await User.findOne({ email: email });
+      // const hashPassword=bcryptjs.hashSync(password,10)
       return res.status(200).json({ success: true, user: user });
     } catch (err) {
       return res.status(500).json({ success: false, error: err });
     }
   },
-  createUser: async (req, res) => {
+  signUp: async (req, res) => {
     let auxUser;
+    // const {}
+    // validaciones
     try {
       auxUser = await User.create(req.body);
       return res.status(201).json({ success: true, user: auxUser });

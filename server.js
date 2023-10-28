@@ -14,7 +14,7 @@ const combosRouter = require("./routes/combosRouter");
 app.get("/", (req, res) => res.send("home"));
 app.use("/api", productsRouter);
 app.use("/api", combosRouter);
-app.use("/user", userRouter);
+app.use("/api", userRouter);
 
 app.listen(process.env.PORT, () =>
   console.log("Server running on port: " + process.env.PORT)

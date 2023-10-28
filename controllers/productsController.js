@@ -1,5 +1,5 @@
 const Product = require("../models/productModel");
-const { handleResponse, handleError } = require("./responseHelpers");
+const { handleResponse, handleError } = require("./helpers/responseHelpers");
 
 const productsController = {
   // Obtener un producto por su ID

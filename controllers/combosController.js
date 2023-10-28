@@ -1,5 +1,5 @@
 const Combos = require("../models/comboModel");
-const { handleResponse, handleError } = require("./responseHelpers");
+const { handleResponse, handleError } = require("./helpers/responseHelpers");
 
 const combosController = {
   getCombos: async (req, res) => {
