@@ -1,10 +1,11 @@
 const express = require("express");
 const userRouter = express.Router();
+const { signUpValidator, signInValidator } = require("../config/validator");
 
 const userController = require("../controllers/userController");
 
-userRouter.post("/auth/signUp", userController.signUp);
-userRouter.get("/auth/signIn", userController.signIn);
+userRouter.post("/auth/signUp", signUpValidator, userController.signUp);
+userRouter.get("/auth/signIn", signInValidator, userController.signIn);
 // userRouter.put("/:id", userController.updateUser);
 // -----------------------token
 
