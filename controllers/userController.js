@@ -5,6 +5,14 @@ const crypto = require("crypto");
 
 const userController = {
     signIn: async(req, res) => {
+        if (!req.body.userData) {
+            return res.json({
+                success: false,
+                from: from,
+                message: "Error: no data found",
+            });
+        }
+
         const { email, password, from } = req.body.userData;
 
         try {
@@ -77,31 +85,16 @@ const userController = {
         }
     },
     signUp: async(req, res) => {
-        // faltan validaciones
-        const userDataNames = [
-            "fullName",
-            "dni",
-            "email",
-            "password",
-            "from",
-            "aplication",
-        ];
         const emailVerify = false;
         const uniqueString = crypto.randomBytes(15).toString("hex");
+
+        // before checking data values, checks if userData exists
         if (!req.body.userData) {
             return res.json({
                 success: false,
+                from: from,
                 message: "Error: no data found",
             });
-        }
-        // checks if something's missing in req.body.userData
-        for (let i = 0; i < userDataNames.length; i++) {
-            if (!req.body.userData[userDataNames[i]]) {
-                return res.json({
-                    success: false,
-                    message: "Error: no data (" + userDataNames[i] + ") found",
-                });
-            }
         }
 
         const { fullName, dni, email, password, from, aplication } =
@@ -130,6 +123,9 @@ const userController = {
                     });
                 }
             } else {
+                if (from === "signUp-form") {
+                    // 9:54
+                }
                 const newUser = new User({
                     fullName,
                     dni,
@@ -153,6 +149,7 @@ const userController = {
             console.log(error);
             res.json({
                 success: false,
+                from: "controller",
                 message: "something's gone wrong, try again in a few minutes",
             });
         }
