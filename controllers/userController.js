@@ -1,9 +1,29 @@
 const User = require("../models/userModel.js");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
+const sendMail = require("../services/sendMail.js");
 //
 
 const userController = {
+    verifyUserAccount: async(req, res) => {
+        // falta redireccionar
+        try {
+            await User.findOneAndUpdate({ uniqueString: req.params.string }, { emailVerification: true });
+
+            return res.json({
+                success: true,
+                from: "user verification",
+                message: "Email verification complete!",
+            });
+        } catch (error) {
+            return res.json({
+                success: false,
+                from: "user verification",
+                message: "Error: no data found",
+            });
+        }
+    },
+
     signIn: async(req, res) => {
         if (!req.body.userData) {
             return res.json({
@@ -22,7 +42,8 @@ const userController = {
                 return res.json({
                     success: false,
                     from: from,
-                    message: "Please sign up before signing in.",
+                    //can't tell the user if the email is incorrect, its not safe security
+                    message: "User or password incorrect.",
                 });
             }
 
@@ -38,8 +59,8 @@ const userController = {
                 from: from,
             };
 
-            if (from !== "signUp-form") {
-                if (isPasswordCorrect.length > 0) {
+            if (isPasswordCorrect.length > 0) {
+                if (from !== "signUp-form") {
                     const hashPassword = bcryptjs.hashSync(password, 10);
                     user.from.push(from);
                     user.password.push(hashPassword);
@@ -54,26 +75,18 @@ const userController = {
                     });
                 } else {
                     res.json({
-                        success: false,
-                        from,
-                        message: "User or password incorrect",
-                    });
-                }
-            } else {
-                if (isPasswordCorrect.length > 0) {
-                    res.json({
                         success: true,
                         from,
                         response: { dataUser },
                         message: "Welcome back, " + dataUser.fullName,
                     });
-                } else {
-                    res.json({
-                        success: false,
-                        from,
-                        message: "User or password incorrect",
-                    });
                 }
+            } else {
+                res.json({
+                    success: false,
+                    from,
+                    message: "User or password incorrect",
+                });
             }
         } catch (err) {
             res.json({
@@ -85,7 +98,6 @@ const userController = {
         }
     },
     signUp: async(req, res) => {
-        const emailVerify = false;
         const uniqueString = crypto.randomBytes(15).toString("hex");
 
         // before checking data values, checks if userData exists
@@ -123,27 +135,42 @@ const userController = {
                     });
                 }
             } else {
-                if (from === "signUp-form") {
-                    // 9:54
-                }
                 const newUser = new User({
                     fullName,
                     dni,
                     email,
                     password: [hashPassword],
-                    from: [from],
-                    aplication,
-                    uniqueString,
-                    emailVerify,
-                });
-
-                await newUser.save();
-
-                res.json({
-                    success: true,
                     from: from,
-                    message: "User created and added " + from + " to your sign in methods",
+                    aplication: aplication,
+                    uniqueString: uniqueString,
+                    emailVerification: false,
                 });
+                if (from === "signUp-form") {
+                    // crear nuevo usuario
+                    sendMail(email, uniqueString);
+                    console.log("Mail enviado");
+                    await newUser.save();
+                    res.json({
+                        success: true,
+                        from: from,
+                        message: "User created and added, check your email to verify account ",
+                    });
+
+                    // verificar email
+                    // mensaje que verifique casilla mail
+                    // 9:54
+                } else {
+                    // if it's coming from social network
+                    // create new user with no need of verification
+                    newUser.emailVerification = true;
+                    await newUser.save();
+
+                    res.json({
+                        success: true,
+                        from: from,
+                        message: "User created and added " + from + " to your sign in methods",
+                    });
+                }
             }
         } catch (error) {
             console.log(error);

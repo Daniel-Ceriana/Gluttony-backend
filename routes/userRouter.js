@@ -6,6 +6,7 @@ const userController = require("../controllers/userController");
 
 userRouter.post("/auth/signUp", signUpValidator, userController.signUp);
 userRouter.get("/auth/signIn", signInValidator, userController.signIn);
+userRouter.get("/auth/verifyEmail/:string", userController.verifyUserAccount);
 // userRouter.put("/:id", userController.updateUser);
 // -----------------------token
 
