@@ -8,18 +8,19 @@ const userController = {
     verifyUserAccount: async(req, res) => {
         // falta redireccionar
         try {
-            await User.findOneAndUpdate({ uniqueString: req.params.string }, { emailVerification: true });
-
-            return res.json({
-                success: true,
-                from: "user verification",
-                message: "Email verification complete!",
-            });
+            const updatedUser = await User.findOneAndUpdate({ uniqueString: req.params.string }, { emailVerification: true }, { new: true });
+            updatedUser.emailVerification;
+            return res.redirect("http://localhost:3000/login");
+            // .json({
+            //     success: true,
+            //     from: "user verification",
+            //     message: "Email verification complete!",
+            // })
         } catch (error) {
             return res.json({
                 success: false,
                 from: "user verification",
-                message: "Error: no data found",
+                message: "Error: no user found",
             });
         }
     },
@@ -146,22 +147,21 @@ const userController = {
                     emailVerification: false,
                 });
                 if (from === "signUp-form") {
-                    // crear nuevo usuario
                     sendMail(email, uniqueString);
-                    console.log("Mail enviado");
                     await newUser.save();
                     res.json({
                         success: true,
                         from: from,
                         message: "User created and added, check your email to verify account ",
                     });
-
-                    // verificar email
-                    // mensaje que verifique casilla mail
                     // 9:54
                 } else {
                     // if it's coming from social network
                     // create new user with no need of verification
+                    // const socialNetworks = ["google","facebook"]...;
+                    // for(){if(socialNetworks[i]){
+                    // crear usuario ya verificado
+                    // }}
                     newUser.emailVerification = true;
                     await newUser.save();
 

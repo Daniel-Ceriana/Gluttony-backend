@@ -17,7 +17,7 @@ const sendMail = (email, uniqueString) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: "danielcerianatest@gmail.com",
+            user: process.env.GOOGLE_USER,
             type: "OAuth2",
             clientId: process.env.GOOGLE_CLIENTID,
             clientSecret: process.env.GOOGLE_SECRET,
@@ -31,7 +31,7 @@ const sendMail = (email, uniqueString) => {
 
     const mailOptions = {
         // mejorar
-        from: "danielcerianatest@gmail.com",
+        from: process.env.GOOGLE_USER,
         to: email,
         subject: "Validacion de mail",
         html: `
