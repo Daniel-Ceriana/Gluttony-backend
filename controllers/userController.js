@@ -62,6 +62,7 @@ const userController = {
         fullName: user.fullName,
         email: user.email,
         from: from,
+        aplication: user.aplication,
       };
 
       if (isPasswordCorrect.length > 0) {
@@ -72,24 +73,25 @@ const userController = {
           user.password.push(hashPassword);
 
           await user.save();
-          //   const token = jwt.sign(...dataUser, process.env.SECRET_TOKEN, {
-          //     expiresIn: "1h",
-          //   });
+          const token = jwt.sign(dataUser, process.env.SECRET_TOKEN, {
+            expiresIn: "1h",
+          });
           res.json({
             // agregar email verification true
             success: true,
             from,
-            response: { /*token,*/ dataUser },
+            response: { token, dataUser },
             message: from + " added to your signing in methods",
           });
         } else {
-          //   const token = jwt.sign(...dataUser, process.env.SECRET_TOKEN, {
-          //     expiresIn: "1h",
-          //   });
+          // si algo se rompe, poner {...dataUser}
+          const token = jwt.sign(dataUser, process.env.SECRET_TOKEN, {
+            expiresIn: "1h",
+          });
           res.json({
             success: true,
             from,
-            response: { /*token,*/ dataUser },
+            response: { token, dataUser },
             message: "Welcome back, " + dataUser.fullName,
           });
         }
