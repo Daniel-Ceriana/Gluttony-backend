@@ -2,10 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const passport = require("passport");
 require("./config/db");
 
 app.use(express.json());
 app.use(cors());
+app.use(passport.initialize());
 
 const productsRouter = require("./routes/productsRouter");
 const userRouter = require("./routes/userRouter");

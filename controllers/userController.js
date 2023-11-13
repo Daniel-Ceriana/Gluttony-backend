@@ -197,6 +197,21 @@ const userController = {
       });
     }
   },
+  verifyToken: async (req, res) => {
+    if (req.user) {
+      res.json({
+        success: true,
+        from: null,
+        // response: { token, dataUser },
+        message: "Welcome back, " + req.user.fullName,
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "Please sign in again",
+      });
+    }
+  },
   updateUser: async (req, res) => {
     try {
       // sacar el id desde el token
