@@ -202,7 +202,11 @@ const userController = {
       res.json({
         success: true,
         from: null,
-        // response: { token, dataUser },
+        response: {
+          id: req.user._id,
+          email: req.user.email,
+          fullName: req.user.fullName,
+        },
         message: "Welcome back, " + req.user.fullName,
       });
     } else {
