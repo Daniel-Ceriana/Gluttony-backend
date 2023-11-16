@@ -10,6 +10,13 @@ const userSchema = new mongoose.Schema({
   uniqueString: { type: String, required: true },
   emailVerification: { type: Boolean, required: true },
 
+  //   cart: { type: Array, required: false },
+  /* cart:{
+      product:
+      cant:
+    }*/
+  // objeto carrito
+
   // cellphone: { type: String, required: false },
   // street: { type: String, required: false },
   // city: { type: Number, required: false, default: "" },
@@ -17,8 +24,6 @@ const userSchema = new mongoose.Schema({
   // postalCode: { type: Number, required: false },
   // country: { type: String, required: false },
 
-  //   cart: { type: Array, required: false },
-  // objeto carrito
   //   buyhistory: { type: String, required: false },
   // productos/fechas/etc
 });
