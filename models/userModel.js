@@ -10,11 +10,11 @@ const userSchema = new mongoose.Schema({
   uniqueString: { type: String, required: true },
   emailVerification: { type: Boolean, required: true },
 
-  //   cart: { type: Array, required: false },
+  cart: { type: Array, required: false },
   /* cart:{
-      product:
-      cant:
-    }*/
+        product:
+        cant:
+      }*/
   // objeto carrito
 
   // cellphone: { type: String, required: false },

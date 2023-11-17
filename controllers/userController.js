@@ -61,6 +61,7 @@ const userController = {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        cart: user.cart,
         from: from,
         aplication: user.aplication,
       };
@@ -219,14 +220,29 @@ const userController = {
   updateUser: async (req, res) => {
     try {
       // sacar el id desde el token
+      // actualizar token
       const user = await User.findOneAndUpdate(
         { _id: req.params.id },
         req.body,
         { new: true }
       );
-      return res.status(200).json({ success: true, user: user });
+      return res.json({
+        success: true,
+        from: from,
+        response: {
+          dataUser: {
+            email: user.email,
+            fullName: user.fullName,
+            cart: user.cart,
+          },
+        },
+        message: "User created and added " + from + " to your sign in methods",
+      });
     } catch (err) {
-      return res.status(500).json({ success: false, error: err });
+      return res.json({
+        success: false,
+        message: "Something went wrong, try again later",
+      });
     }
   },
 };
