@@ -64,6 +64,7 @@ const userController = {
         cart: user.cart,
         from: from,
         aplication: user.aplication,
+        role: user.role,
       };
 
       if (isPasswordCorrect.length > 0) {
@@ -159,6 +160,7 @@ const userController = {
           aplication: aplication,
           uniqueString: uniqueString,
           emailVerification: false,
+          role: "user",
         });
         if (from === "signUp-form") {
           sendMail(email, uniqueString);
@@ -207,6 +209,7 @@ const userController = {
           id: req.user._id,
           email: req.user.email,
           fullName: req.user.fullName,
+          role: req.user.role,
         },
         message: "Welcome back, " + req.user.fullName,
       });
