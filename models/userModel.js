@@ -9,12 +9,12 @@ const userSchema = new mongoose.Schema({
   aplication: { type: String },
   uniqueString: { type: String, required: true },
   emailVerification: { type: Boolean, required: true },
-
+  role: { type: String, required: true, default: "user" },
   cart: { type: Array, required: false },
   /* cart:{
-        product:
-        cant:
-      }*/
+          product:
+          cant:
+        }*/
   // objeto carrito
 
   // cellphone: { type: String, required: false },
