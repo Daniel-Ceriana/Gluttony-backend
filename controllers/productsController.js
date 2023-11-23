@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const { validateAutorization } = require("../services/checkRole");
 const { handleResponse, handleError } = require("./helpers/responseHelpers");
 
 const productsController = {
@@ -70,8 +71,12 @@ const productsController = {
   // Crear un nuevo producto
   createProduct: async (req, res) => {
     try {
-      const auxProduct = await Product.create(req.body);
-      return handleResponse(res, 201, true, { product: auxProduct });
+      if (validateAutorization(req.user.role, "create")) {
+        const auxProduct = await Product.create(req.body);
+        return handleResponse(res, 201, true, { product: auxProduct });
+      } else {
+        return handleError(res, 500, { message: "Unauthorized" });
+      }
     } catch (err) {
       return handleError(res, 500, err);
     }
