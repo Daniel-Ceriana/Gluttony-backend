@@ -71,7 +71,7 @@ const productsController = {
   // Crear un nuevo producto
   createProduct: async (req, res) => {
     try {
-      if (validateAutorization(req.user.role, "create")) {
+      if (validateAutorization.create(req.user.role)) {
         const auxProduct = await Product.create(req.body);
         return handleResponse(res, 201, true, { product: auxProduct });
       } else {
@@ -85,20 +85,26 @@ const productsController = {
   // Actualizar un producto por su ID
   updateProduct: async (req, res) => {
     try {
-      const product = await Product.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body,
-        { new: true }
-      );
+      if (validateAutorization.edit(req.user.role)) {
+        const product = await Product.findOneAndUpdate(
+          { _id: req.params.id },
+          req.body,
+          { new: true }
+        );
+        if (!product) {
+          console.log("ERROR");
+          return handleResponse(res, 404, false, {
+            product: [],
+            message: "Producto no encontrado",
+          });
+        }
 
-      if (!product) {
-        return handleResponse(res, 404, false, {
-          product: [],
-          message: "Producto no encontrado",
-        });
+        return handleResponse(res, 200, true, { product });
+      } else {
+        console.log("SIN AUTORIZACION");
+
+        return handleError(res, 500, { message: "Unauthorized" });
       }
-
-      return handleResponse(res, 200, true, { product });
     } catch (err) {
       return handleError(res, 500, err);
     }
@@ -107,18 +113,24 @@ const productsController = {
   // Eliminar un producto por su ID
   deleteProduct: async (req, res) => {
     try {
-      const deletedProduct = await Product.findByIdAndDelete({
-        _id: req.params.id,
-      });
-
-      if (!deletedProduct) {
-        return handleResponse(res, 404, false, {
-          product: [],
-          message: "Producto no encontrado",
+      if (validateAutorization.delete(req.user.role)) {
+        const deletedProduct = await Product.findByIdAndDelete({
+          _id: req.params.id,
         });
-      }
 
-      return handleResponse(res, 200, true, { message: "Producto eliminado" });
+        if (!deletedProduct) {
+          return handleResponse(res, 404, false, {
+            product: [],
+            message: "Producto no encontrado",
+          });
+        }
+
+        return handleResponse(res, 200, true, {
+          message: "Producto eliminado",
+        });
+      } else {
+        return handleError(res, 500, { message: "Unauthorized" });
+      }
     } catch (err) {
       return handleError(res, 500, err);
     }

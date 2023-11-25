@@ -10,7 +10,15 @@ productsRouter.post(
   productsController.createProduct
 );
 productsRouter.get("/products/:id", productsController.getProductById);
-productsRouter.put("/products/:id", productsController.updateProduct);
-productsRouter.delete("/products/:id", productsController.deleteProduct);
+productsRouter.put(
+  "/products/:id",
+  passport.authenticate("jwt", { session: false }),
+  productsController.updateProduct
+);
+productsRouter.delete(
+  "/products/:id",
+  passport.authenticate("jwt", { session: false }),
+  productsController.deleteProduct
+);
 
 module.exports = productsRouter;
