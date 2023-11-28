@@ -113,7 +113,7 @@ const userController = {
       });
     }
   },
-  signUp: async (req, res) => {
+  _signUp: async (req, res) => {
     const uniqueString = crypto.randomBytes(15).toString("hex");
 
     // before checking data values, checks if userData exists
@@ -163,7 +163,7 @@ const userController = {
           role: "user",
         });
         if (from === "signUp-form") {
-          sendMail(email, uniqueString);
+          // sendMail(email, uniqueString);
           await newUser.save();
           res.json({
             success: true,
@@ -199,6 +199,12 @@ const userController = {
         message: "something's gone wrong, try again in a few minutes",
       });
     }
+  },
+  get signUp() {
+    return this._signUp;
+  },
+  set signUp(value) {
+    this._signUp = value;
   },
   verifyToken: async (req, res) => {
     if (req.user) {
