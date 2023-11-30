@@ -113,7 +113,7 @@ const userController = {
       });
     }
   },
-  _signUp: async (req, res) => {
+  signUp: async (req, res) => {
     const uniqueString = crypto.randomBytes(15).toString("hex");
 
     // before checking data values, checks if userData exists
@@ -199,12 +199,6 @@ const userController = {
         message: "something's gone wrong, try again in a few minutes",
       });
     }
-  },
-  get signUp() {
-    return this._signUp;
-  },
-  set signUp(value) {
-    this._signUp = value;
   },
   verifyToken: async (req, res) => {
     if (req.user) {
