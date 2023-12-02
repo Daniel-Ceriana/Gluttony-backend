@@ -20,5 +20,6 @@ productsRouter.delete(
   passport.authenticate("jwt", { session: false }),
   productsController.deleteProduct
 );
+productsRouter.post("/products/cart", productsController.updateCart);
 
 module.exports = productsRouter;

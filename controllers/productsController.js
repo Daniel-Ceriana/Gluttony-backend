@@ -3,6 +3,27 @@ const { validateAutorization } = require("../services/checkRole");
 const { handleResponse, handleError } = require("./helpers/responseHelpers");
 
 const productsController = {
+  updateCart: async (req, res) => {
+    console.log(req.body);
+    try {
+      if (req.body) {
+        const user = await User.findOneAndUpdate(
+          { _id: req.body.user.user.id },
+          { cart: req.body.cart.products },
+          { new: true }
+        );
+
+        return res.json({
+          message: "Cart modified",
+        });
+      }
+    } catch (err) {
+      return res.json({
+        success: false,
+        message: err,
+      });
+    }
+  },
   // Obtener un producto por su ID
   getProductById: async (req, res) => {
     try {
