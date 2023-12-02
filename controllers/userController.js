@@ -8,19 +8,11 @@ const jwt = require("jsonwebtoken");
 const userController = {
   verifyUserAccount: async (req, res) => {
     try {
-      //   const updatedUser =
       await User.findOneAndUpdate(
         { uniqueString: req.params.string },
         { emailVerification: true }
       );
-      // , { new: true }
-      // updatedUser.emailVerification;
       return res.redirect("http://localhost:3000/login");
-      // .json({
-      //     success: true,
-      //     from: "user verification",
-      //     message: "Email verification complete!",
-      // })
     } catch (error) {
       return res.json({
         success: false,
@@ -62,8 +54,6 @@ const userController = {
         fullName: user.fullName,
         email: user.email,
         cart: user.cart,
-        from: from,
-        aplication: user.aplication,
         role: user.role,
       };
 
@@ -210,6 +200,7 @@ const userController = {
           email: req.user.email,
           fullName: req.user.fullName,
           role: req.user.role,
+          cart: req.user.cart,
         },
         message: "Welcome back, " + req.user.fullName,
       });
