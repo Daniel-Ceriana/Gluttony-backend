@@ -12,17 +12,17 @@ const userSchema = new mongoose.Schema({
   role: { type: String, required: true, default: "user" },
   cart: { type: Array, required: false },
   /* cart:{
-              product:
-              cant:
-            }*/
+                product:
+                cant:
+              }*/
   // objeto carrito
 
-  // cellphone: { type: String, required: false },
-  // street: { type: String, required: false },
-  // city: { type: Number, required: false, default: "" },
-  // state: { type: String, required: false },
-  // postalCode: { type: Number, required: false },
-  // country: { type: String, required: false },
+  cellphone: { type: String, required: false, default: "" },
+  street: { type: String, required: false, default: "" },
+  city: { type: String, required: false, default: "" },
+  state: { type: String, required: false, default: "" },
+  postalCode: { type: Number, required: false, default: "" },
+  country: { type: String, required: false, default: "" },
 
   //   buyhistory: { type: String, required: false },
   // productos/fechas/etc

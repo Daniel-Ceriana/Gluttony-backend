@@ -13,7 +13,7 @@ userRouter.get(
   passport.authenticate("jwt", { session: false }),
   userController.verifyToken
 );
-// userRouter.put("/:id", userController.updateUser);
+userRouter.put("/auth/:id", userController.updateUser);
 // -----------------------token
 
 module.exports = userRouter;

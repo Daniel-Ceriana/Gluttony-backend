@@ -55,6 +55,14 @@ const userController = {
         email: user.email,
         cart: user.cart,
         role: user.role,
+        dni: user.dni || "",
+        cellphone: user.cellphone || "",
+        street: user.street || "",
+        city: user.city || "",
+        state: user.state || "",
+        postalCode: user.postalCode || "",
+        country: user.country || "",
+        from: from,
       };
 
       if (isPasswordCorrect.length > 0) {
@@ -195,12 +203,28 @@ const userController = {
       res.json({
         success: true,
         from: null,
+        // validar que los datos existan
         response: {
           id: req.user._id,
           email: req.user.email,
           fullName: req.user.fullName,
           role: req.user.role,
           cart: req.user.cart,
+          dni: req.user.dni || "",
+          cellphone: req.user.cellphone || "",
+          street: req.user.street || "",
+          city: req.user.city || "",
+          state: req.user.state || "",
+          postalCode: req.user.postalCode || "",
+          country: req.user.country || "",
+          from: req.user.from,
+          // dni
+          // cellphone
+          // street
+          // city
+          // state
+          // postalCode
+          // country
         },
         message: "Welcome back, " + req.user.fullName,
       });
@@ -215,27 +239,39 @@ const userController = {
     try {
       // sacar el id desde el token
       // actualizar token
+      console.log("llega 1");
+
       const user = await User.findOneAndUpdate(
         { _id: req.params.id },
-        req.body,
+        { ...req.body },
         { new: true }
       );
       return res.json({
         success: true,
-        from: from,
         response: {
           dataUser: {
+            id: user._id,
             email: user.email,
             fullName: user.fullName,
+            role: user.role,
             cart: user.cart,
+            dni: user.dni || "",
+            cellphone: user.cellphone || "",
+            street: user.street || "",
+            city: user.city || "",
+            state: user.state || "",
+            postalCode: user.postalCode || "",
+            country: user.country || "",
+            from: user.from,
+            password: user.password,
           },
         },
-        message: "User created and added " + from + " to your sign in methods",
+        message: "User updated",
       });
     } catch (err) {
       return res.json({
         success: false,
-        message: "Something went wrong, try again later",
+        message: "Something went wrong while updating user, try again later",
       });
     }
   },
