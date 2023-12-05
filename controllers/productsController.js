@@ -1,7 +1,7 @@
 const Product = require("../models/productModel");
 const { validateAutorization } = require("../services/checkRole");
 const { handleResponse, handleError } = require("./helpers/responseHelpers");
-
+const User = require("../models/userModel");
 const productsController = {
   updateCart: async (req, res) => {
     console.log(req.body);
