@@ -161,6 +161,7 @@ const userController = {
           role: "user",
         });
         if (from === "signUp-form") {
+          console.log("Email Sent");
           sendMail(email, uniqueString);
           await newUser.save();
           res.json({
