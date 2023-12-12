@@ -2,10 +2,11 @@
     "name": "nodejs-server-and-mongo",
     "version": "1.0.0",
     "description": "proyecto de pruebas con nodejs y base de datos mongo",
-    "main": "server.js",
-    "scripts": {
+    "main": "/Gluttony-backend/server.js",
+    "scripts": { 
+
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon ./server.js"
+        "dev": "nodemon --inspect=0.0.0.0:9229 -L src/server.js"
     },
     "author": "Daniel Ceriana",
     "license": "ISC",
@@ -13,7 +14,6 @@
         "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
         "crypto": "^1.0.1",
-        "dotenv": "^16.3.1",
         "express": "^4.18.2",
         "googleapis": "^128.0.0",
         "joi": "^17.11.0",
@@ -22,6 +22,7 @@
         "mongoose-paginate-v2": "^1.7.4",
         "node": "^20.7.0",
         "nodemailer": "^6.9.7",
+        "nodemon": "^3.0.2",
         "passport": "^0.6.0",
         "passport-jwt": "^4.0.1"
     },
