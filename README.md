@@ -11,6 +11,7 @@ Dentro de los usuarios se puede hacer Sign Up, Sign In, chequeos de validez de t
 
 
 Deploy del front end:
+https://vite-gluttony.vercel.app
 
 Endpoints para testear:
 Base: https://gluttony-backend.vercel.app/api
